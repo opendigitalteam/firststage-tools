@@ -1,9 +1,10 @@
 import Link from "next/link";
+import H1 from "./_components/H1";
 
 export default function Home() {
   return (
     <div>
-      <h1>Tools</h1>
+      <H1>Free Tools</H1>
 
       <ul>
         <li>
@@ -11,7 +12,7 @@ export default function Home() {
             href="/ai-adoption-uk"
             className="font-medium underline hover:text-odpink-mid"
           >
-            AI Adoption in UK: Benchmarking Tool
+            AI adoption in UK companies: Benchmarking Tool
           </Link>
         </li>
       </ul>
