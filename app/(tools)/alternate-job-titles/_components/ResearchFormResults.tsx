@@ -84,13 +84,22 @@ function ResultsContainer({
           <tbody>{children}</tbody>
         </table>
 
-        <div className="border-t pt-3 md:pt-5 xl:pt-7">
-          <p className="text-sm text-balance opacity-75">
+        <div className="text-sm flex flex-col gap-3 md:gap-5 border-t pt-3 md:pt-5 xl:pt-7">
+          <p className="text-balance opacity-75">
             These are the top 10 job titles that are similar to the one you
             entered. The relevance score is a measure of how similar the job
             title is to the one you entered. The popularity score is a measure
             of how often the job title is used in job postings based on number
             of search engine results.
+          </p>
+
+          <p>
+            <Link
+              href="?"
+              className="font-medium underline hover:text-odpink-mid"
+            >
+              Looking for more inspiration?
+            </Link>
           </p>
         </div>
       </div>

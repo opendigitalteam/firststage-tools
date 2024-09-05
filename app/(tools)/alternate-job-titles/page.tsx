@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import H1 from "../_components/H1";
 import { researchFromCache } from "./_action";
+import ExamplesToTry from "./_components/ExamplesToTry";
 import ResearchForm from "./_components/ResearchForm";
 import ResearchFormResults from "./_components/ResearchFormResults";
 import { AlternateJobTitle, ResearchQuery } from "./_domain";
@@ -49,10 +50,14 @@ export default async function Page({
           jobTitle={queryValidation.data?.jobTitle}
         />
 
-        <ResearchFormResults
-          jobTitle={queryValidation.data?.jobTitle}
-          alternateJobTitles={alternateJobTitles}
-        />
+        {queryValidation.data?.jobTitle ? (
+          <ResearchFormResults
+            jobTitle={queryValidation.data?.jobTitle}
+            alternateJobTitles={alternateJobTitles}
+          />
+        ) : (
+          <ExamplesToTry />
+        )}
       </div>
     </div>
   );
