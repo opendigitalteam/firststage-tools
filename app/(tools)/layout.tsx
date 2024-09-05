@@ -54,7 +54,7 @@ export default function Layout({ children }: PropsWithChildren) {
       </Header>
 
       <Main>
-        <div className="flex flex-col w-full max-w-screen-2xl justify-between gap-3 px-4 pt-4 max-sm:flex-col sm:px-5 md:gap-8 md:px-10 md:pt-5 lg:px-16 2xl:px-20 2xl:pt-10">
+        <div className="flex flex-col w-full max-w-screen-2xl pb-5 justify-between gap-3 px-4 pt-4 max-sm:flex-col sm:px-5 md:px-10 md:pt-5 lg:px-16 2xl:px-20 2xl:pt-10">
           {children}
         </div>
       </Main>
