@@ -10,10 +10,22 @@ export default function Layout({ children }: PropsWithChildren) {
   return (
     <Page>
       <Header>
-        <div className="flex w-full max-w-screen-2xl justify-between gap-3 px-4 pt-4 max-sm:flex-col sm:px-5 md:gap-8 md:px-10 md:pt-5 lg:px-16 2xl:px-20 2xl:pt-10">
-          <LogoLink href="https://firststage.co" size="md" />
+        <div className="flex w-full max-w-screen-2xl justify-between gap-3 px-4 pt-4 max-md:flex-col sm:px-5 md:gap-8 md:px-10 md:pt-5 lg:px-16 2xl:px-20 2xl:pt-10">
+          <div className="flex justify-between">
+            <LogoLink href="https://firststage.co" size="md" />
 
-          <nav className="order-2 flex items-center gap-5 max-md:text-sm">
+            <div className="shrink md:hidden">
+              <UtilityLink
+                href="https://firststage.co/sign-up"
+                size="md"
+                color="pink-dark"
+              >
+                Sign up for free
+              </UtilityLink>
+            </div>
+          </div>
+
+          <nav className="md:ml-auto flex items-center gap-5 max-md:text-sm whitespace-nowrap">
             <Link href="/" className="underline hover:text-odpink-mid">
               Free Tools
             </Link>
@@ -39,17 +51,17 @@ export default function Layout({ children }: PropsWithChildren) {
             >
               Sign In
             </Link>
-
-            <div className="shrink max-sm:ml-auto">
-              <UtilityLink
-                href="https://firststage.co/sign-up"
-                size="md"
-                color="pink-dark"
-              >
-                Sign up for free
-              </UtilityLink>
-            </div>
           </nav>
+
+          <div className="shrink max-md:hidden">
+            <UtilityLink
+              href="https://firststage.co/sign-up"
+              size="md"
+              color="pink-dark"
+            >
+              Sign up for free
+            </UtilityLink>
+          </div>
         </div>
       </Header>
 
