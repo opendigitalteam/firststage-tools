@@ -7,17 +7,17 @@ import ResearchFormResults from "./_components/ResearchFormResults";
 import { AlternateJobTitle, ResearchQuery } from "./_domain";
 
 export const metadata: Metadata = {
-  title: "Alternative Job Titles - FirstStage Tools",
+  title: "Job Title Research Tool - FirstStage Tools",
   description:
-    "Research alternative job titles to attract the right volume and quality of candidates.",
+    " This is a free tool to help you research job title popularity and find alternatives you might not have thought of",
   openGraph: {
-    title: "Alternative Job Titles",
-    description: "Use AI to research alternative job titles",
+    title: "Job Title Research Tool",
+    description: "Use AI to research job titles",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Alternative Job Titles",
-    description: "Use AI to research alternative job titles",
+    title: "Job Title Research Tool",
+    description: "Use AI to research job titles",
     creator: "@opendigitalteam",
   },
 };

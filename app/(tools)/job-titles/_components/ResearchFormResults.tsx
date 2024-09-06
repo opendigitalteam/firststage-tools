@@ -84,8 +84,8 @@ function ResultsContainer({
           <tbody>{children}</tbody>
         </table>
 
-        <div className="max-w-2xl text-sm flex flex-col gap-3 md:gap-5 border-t pt-3 md:pt-5 xl:pt-7">
-          <p className="opacity-75">
+        <div className="text-sm flex flex-col gap-3 md:gap-5 border-t pt-3 md:pt-5 xl:pt-7">
+          <p className="max-w-2xl opacity-75">
             These are the top 10 job titles that are similar to the one you
             entered. The relevance score is a measure of how similar the job
             title is to the one you entered. The popularity score is a measure
@@ -95,7 +95,7 @@ function ResultsContainer({
             respective site in the three months previous.
           </p>
 
-          <p className="opacity-75">
+          <p className="max-w-2xl opacity-75">
             Picking the right job title to advertise can have a big influence
             over the number and quality of applications you receive. Same goes
             for when you are deciding who to sell to. Use this tool to research
