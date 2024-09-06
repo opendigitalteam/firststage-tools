@@ -31,28 +31,32 @@ export default async function Page({
   let alternateJobTitles: AlternateJobTitle[] | undefined;
 
   if (queryValidation.success) {
-    alternateJobTitles = await researchFromCache(queryValidation.data.jobTitle);
+    alternateJobTitles = await researchFromCache(
+      queryValidation.data.jobTitle,
+      queryValidation.data.location
+    );
   }
 
   return (
-    <div className="flex flex-col  max-w-3xl gap-3 md:gap-8">
-      <H1>Alternate Job Titles</H1>
+    <div className="flex flex-col  max-w-5xl gap-3 md:gap-8">
+      <H1>Job Title Research Tool</H1>
 
-      <p className="text-lg text-balance">
-        Picking the right job title to advertise can have a big influence over
-        the number and quality of applications you receive. This is a free tool
-        to help you research the best job title for your business.
+      <p className="text-lg text-balance max-w-3xl">
+        This is a free tool to help you research job title popularity and find
+        alternatives you might not have thought of.
       </p>
 
       <div className="flex flex-col gap-5 md:gap-7 xl:gap-10">
         <ResearchForm
           key={queryValidation.data?.jobTitle}
           jobTitle={queryValidation.data?.jobTitle}
+          location={queryValidation.data?.location}
         />
 
         {queryValidation.data?.jobTitle ? (
           <ResearchFormResults
             jobTitle={queryValidation.data?.jobTitle}
+            location={queryValidation.data?.location}
             alternateJobTitles={alternateJobTitles}
           />
         ) : (

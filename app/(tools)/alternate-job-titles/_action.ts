@@ -13,10 +13,17 @@ import { CreateChatCompletion } from "@aitoolkit/complete";
 import { OpenAIChatCompletionGateway } from "@aitoolkit/complete/openai";
 import { Search } from "@aitoolkit/search";
 import GoogleCustomSearchGateway from "@aitoolkit/search/gateways/GoogleCustomSearchGateway";
+import { DateTime } from "luxon";
 import { redirect } from "next/navigation";
 import OpenAI from "openai";
 import { z, ZodFormattedError } from "zod";
-import { AlternateJobTitle, ResearchQuery } from "./_domain";
+import { AlternateJobTitle, CountryCode, ResearchQuery } from "./_domain";
+import {
+  indeedDomainsByCountryCode,
+  linkedInDomainsByCountryCode,
+} from "./_jobSites";
+
+const CACHE_VERSION = "v10";
 
 const completionGateway = new OpenAIChatCompletionGateway({
   client: new OpenAI({ apiKey: OPENAI_API_KEY }),
@@ -33,15 +40,19 @@ export async function research(
 ): Promise<ResearchResponse> {
   const validation = ResearchQuery.safeParse({
     jobTitle: formData.get("jobTitle"),
+    location: formData.get("location"),
   });
 
   if (validation.success) {
     try {
-      await suggestRankedAlternatives(validation.data.jobTitle);
+      await suggestRankedAlternatives(
+        validation.data.jobTitle,
+        validation.data.location
+      );
     } catch (err) {
       console.error(err);
     }
-    redirect(`?${new URLSearchParams({ jobTitle: validation.data.jobTitle })}`);
+    redirect(`?${new URLSearchParams(validation.data)}`);
   } else {
     return validation.error.format();
   }
@@ -50,16 +61,18 @@ export async function research(
 type ResearchFromCacheResponse = AlternateJobTitle[] | undefined;
 
 export async function researchFromCache(
-  jobTitle: string
+  jobTitle: string,
+  location: CountryCode
 ): Promise<ResearchFromCacheResponse> {
   const query = ResearchQuery.parse({
     jobTitle,
+    location,
   });
 
   const response = await FetchCacheData({
     gateway: cacheGateway,
-    keyPrefix: "tools/alternate-job-titles/ranked-alternatives-v2",
-    key: query.jobTitle,
+    keyPrefix: `tools/alternate-job-titles/ranked-alternatives-${CACHE_VERSION}`,
+    key: `${query.jobTitle}-${query.location}`,
   });
 
   if (response) {
@@ -68,13 +81,15 @@ export async function researchFromCache(
 }
 
 async function suggestRankedAlternatives(
-  jobTitle: string
+  jobTitle: string,
+  location: CountryCode
 ): Promise<AlternateJobTitle[]> {
   const response = await DoOnce(
     {
       gateway: cacheGateway,
-      keyPrefix: "tools/alternate-job-titles/ranked-alternatives-v2",
-      key: jobTitle,
+      keyPrefix: `tools/alternate-job-titles/ranked-alternatives-${CACHE_VERSION}`,
+      key: `${jobTitle}-${location}`,
+      overwrite: true,
     },
     async () => {
       const alternatives = await searchResults(
@@ -84,7 +99,8 @@ async function suggestRankedAlternatives(
             relevance: 10,
           },
           ...(await suggestAlternatives(jobTitle)),
-        ].slice(0, 10)
+        ].slice(0, 10),
+        location
       );
       return { alternatives };
     }
@@ -98,62 +114,91 @@ async function suggestRankedAlternatives(
 }
 
 async function suggestAlternatives(jobTitle: string) {
-  const response = await CreateChatCompletion({
-    gateway: completionGateway,
-    messages: [
-      {
-        role: "system",
-        content: `
+  const response = await DoOnce(
+    {
+      gateway: cacheGateway,
+      keyPrefix: `tools/alternate-job-titles/suggest-alternatives-${CACHE_VERSION}`,
+      key: jobTitle,
+    },
+    async () => {
+      const response = await CreateChatCompletion({
+        gateway: completionGateway,
+        messages: [
+          {
+            role: "system",
+            content: `
 I'm trying to find some alternative job titles. 
 
 Provide a relevance score out of 10, with 10 being most relevant.
 
-Come up with at least 10 alternatives.
+Come up with at least 20 alternatives.
 
 Respond with JSON in this format:
 
 {"alternatives": [{ "jobTitle": string, "relevance": number]}
-`,
-      },
-      {
-        role: "user",
-        content: jobTitle,
-      },
-    ],
-    responseValidator: (input) =>
-      z
-        .object({
-          alternatives: z
-            .object({ jobTitle: z.string(), relevance: z.number() })
-            .array(),
-        })
-        .parse(input),
-  });
+            `,
+          },
+          {
+            role: "user",
+            content: jobTitle,
+          },
+        ],
+        responseValidator: (input) =>
+          z
+            .object({
+              alternatives: z
+                .object({ jobTitle: z.string(), relevance: z.number() })
+                .array(),
+            })
+            .parse(input),
+      });
 
-  if (response.ok) {
-    return response.content.alternatives;
-  } else {
-    return [];
-  }
+      if (response.ok) {
+        return { alternatives: response.content.alternatives };
+      } else {
+        return { alternatives: [] };
+      }
+    }
+  );
+
+  return (response.data?.alternatives || []).sort(
+    (a: AlternateJobTitle, b: AlternateJobTitle) => b.relevance - a.relevance
+  );
 }
 
 async function searchResults(
-  alternatives: { jobTitle: string; relevance: number }[]
+  alternatives: { jobTitle: string; relevance: number }[],
+  location: CountryCode
 ) {
   return Promise.all(
     alternatives.map(async ({ jobTitle, relevance }) => {
-      const { popularityScore } = await searchForJob(jobTitle);
-      return { jobTitle, relevance, popularityScore };
+      const [{ popularityScore }, { indeedScore }, { linkedInScore }] =
+        await Promise.all([
+          searchForJob(jobTitle, location),
+          searchForJobOnIndeed(jobTitle, location),
+          searchForJobOnLinkedIn(jobTitle, location),
+        ]);
+      return {
+        jobTitle,
+        relevance,
+        popularityScore,
+        indeedScore,
+        linkedInScore,
+      };
     })
   );
 }
 
-async function searchForJob(jobTitle: string) {
+async function searchForJob(jobTitle: string, location: CountryCode) {
+  const query = location
+    ? `"${jobTitle}" jobs in ${location}`
+    : `"${jobTitle}" jobs`;
+
   const response = await DoOnce(
     {
       gateway: cacheGateway,
-      keyPrefix: "tools/alternate-job-titles/job-google-search-v4",
-      key: jobTitle,
+      keyPrefix: `tools/alternate-job-titles/job-google-search-${CACHE_VERSION}`,
+      key: query,
     },
     async () =>
       await Search({
@@ -161,7 +206,7 @@ async function searchForJob(jobTitle: string) {
           apiKey: GOOGLE_CUSTOM_SEARCH_API_KEY,
           engineId: GOOGLE_PROGRAMMABLE_SEARCH_ENGINE_ID,
         }),
-        query: `${jobTitle} jobs`,
+        query,
       })
   );
 
@@ -174,6 +219,98 @@ async function searchForJob(jobTitle: string) {
     return {
       jobTitle,
       popularityScore: 0,
+    };
+  }
+}
+
+async function searchForJobOnIndeed(jobTitle: string, location: CountryCode) {
+  const afterDate = DateTime.now()
+    .minus({ month: 4 })
+    .startOf("month")
+    .toISODate();
+  const beforeDate = DateTime.now()
+    .minus({ month: 1 })
+    .endOf("month")
+    .toISODate();
+
+  const indeedDomain =
+    location && location !== "global"
+      ? indeedDomainsByCountryCode[location]
+      : "indeed.com";
+
+  const query = `intitle:"${jobTitle}" site:${indeedDomain}/viewjob after:${afterDate} before:${beforeDate}`;
+
+  const response = await DoOnce(
+    {
+      gateway: cacheGateway,
+      keyPrefix: `tools/alternate-job-titles/job-on-indeed-google-search-${CACHE_VERSION}`,
+      key: query,
+    },
+    async () =>
+      await Search({
+        gateway: new GoogleCustomSearchGateway({
+          apiKey: GOOGLE_CUSTOM_SEARCH_API_KEY,
+          engineId: GOOGLE_PROGRAMMABLE_SEARCH_ENGINE_ID,
+        }),
+        query,
+      })
+  );
+
+  if (response.ok) {
+    return {
+      jobTitle,
+      indeedScore: response.data.totalResults || 0,
+    };
+  } else {
+    return {
+      jobTitle,
+      indeedScore: 0,
+    };
+  }
+}
+
+async function searchForJobOnLinkedIn(jobTitle: string, location: CountryCode) {
+  const afterDate = DateTime.now()
+    .minus({ month: 4 })
+    .startOf("month")
+    .toISODate();
+  const beforeDate = DateTime.now()
+    .minus({ month: 1 })
+    .endOf("month")
+    .toISODate();
+
+  const linkedInDomains =
+    location && location !== "global"
+      ? linkedInDomainsByCountryCode[location]
+      : "linkedin.com";
+
+  const query = `intitle:"${jobTitle}" site:${linkedInDomains}/jobs/view after:${afterDate} before:${beforeDate}`;
+
+  const response = await DoOnce(
+    {
+      gateway: cacheGateway,
+      keyPrefix: `tools/alternate-job-titles/job-on-li-google-search-${CACHE_VERSION}`,
+      key: query,
+    },
+    async () =>
+      await Search({
+        gateway: new GoogleCustomSearchGateway({
+          apiKey: GOOGLE_CUSTOM_SEARCH_API_KEY,
+          engineId: GOOGLE_PROGRAMMABLE_SEARCH_ENGINE_ID,
+        }),
+        query,
+      })
+  );
+
+  if (response.ok) {
+    return {
+      jobTitle,
+      linkedInScore: response.data.totalResults || 0,
+    };
+  } else {
+    return {
+      jobTitle,
+      linkedInScore: 0,
     };
   }
 }
