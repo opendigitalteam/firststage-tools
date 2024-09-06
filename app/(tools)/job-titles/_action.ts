@@ -89,7 +89,6 @@ async function suggestRankedAlternatives(
       gateway: cacheGateway,
       keyPrefix: `tools/alternate-job-titles/ranked-alternatives-${CACHE_VERSION}`,
       key: `${jobTitle}-${location}`,
-      overwrite: true,
     },
     async () => {
       const alternatives = await searchResults(
