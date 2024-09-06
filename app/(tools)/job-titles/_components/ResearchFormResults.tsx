@@ -23,7 +23,7 @@ export default async function ResearchFormResults({
         .sort((a, b) => (a.relevance > b.relevance ? -1 : 1))
         .map((alternative, i) => (
           <tr key={i}>
-            <td className="py-1 ">
+            <td className="py-1 text-sm leading-tight sm:leading-normal sm:text-base">
               <Link
                 href={`?${new URLSearchParams({
                   jobTitle: alternative.jobTitle,
@@ -33,17 +33,23 @@ export default async function ResearchFormResults({
                 {alternative.jobTitle}
               </Link>{" "}
             </td>
-            <td className="py-1 font-mono text-right max-sm:text-sm">
-              {alternative.relevance.toLocaleString()}
+            <td className="p-1 font-mono text-right text-xs sm:text-sm md:text-base">
+              <NumberCell>{alternative.relevance.toLocaleString()}</NumberCell>
             </td>
-            <td className="py-1 font-mono text-right max-sm:text-sm">
-              {Number(alternative.popularityScore).toLocaleString()}
+            <td className="p-1 font-mono text-right text-xs sm:text-sm md:text-base">
+              <NumberCell>
+                <ResponsiveNumber n={alternative.popularityScore} />
+              </NumberCell>
             </td>
-            <td className="py-1 font-mono text-right max-sm:text-sm">
-              {Number(alternative.indeedScore).toLocaleString()}
+            <td className="p-1 font-mono text-right text-xs sm:text-sm md:text-base">
+              <NumberCell>
+                <ResponsiveNumber n={alternative.popularityScore} />
+              </NumberCell>
             </td>
-            <td className="py-1 font-mono text-right max-sm:text-sm">
-              {Number(alternative.linkedInScore).toLocaleString()}
+            <td className="p-1 font-mono text-right text-xs sm:text-sm md:text-base">
+              <NumberCell>
+                <ResponsiveNumber n={alternative.linkedInScore} />
+              </NumberCell>
             </td>
           </tr>
         ))}
@@ -64,27 +70,28 @@ function ResultsContainer({
           {location !== "global" ? countries[location]?.name : "Global"}
         </h2>
 
-        <table className="table w-full">
-          <colgroup>
-            <col className="md:grow" />
-            <col className="md:shrink" />
-            <col className="md:shrink" />
-            <col className="md:shrink" />
-          </colgroup>
-
-          <thead className="border-b text-lg">
+        <table className="w-full">
+          <thead className="border-b md:text-lg">
             <tr>
               <th className="text-left pb-2">Job Title</th>
-              <th className="text-right pb-2">Relevance</th>
-              <th className="text-right pb-2">Popularity</th>
-              <th className="text-right pb-2">Indeed</th>
-              <th className="text-right pb-2">LinkedIn</th>
+              <th className="text-right pb-2">
+                Rel<span className="max-md:sr-only">evance</span>
+              </th>
+              <th className="text-right pb-2">
+                Pop<span className="max-md:sr-only">ularity</span>
+              </th>
+              <th className="text-right pb-2">
+                In<span className="max-md:sr-only">deed</span>
+              </th>
+              <th className="text-right pb-2">
+                Li<span className="max-md:sr-only">nkedIn</span>
+              </th>
             </tr>
           </thead>
           <tbody>{children}</tbody>
         </table>
 
-        <div className="text-sm flex flex-col gap-3 md:gap-5 border-t pt-3 md:pt-5 xl:pt-7">
+        <div className="text-xs sm:text-sm flex flex-col gap-3 md:gap-5 border-t pt-3 md:pt-5 xl:pt-7">
           <p className="max-w-2xl opacity-75">
             These are the top 10 job titles that are similar to the one you
             entered. The relevance score is a measure of how similar the job
@@ -115,3 +122,18 @@ function ResultsContainer({
     </Glass>
   );
 }
+
+const ResponsiveNumber = ({ n }: { n: string | number }) => (
+  <span>
+    <span className="max-md:hidden">{Number(n).toLocaleString()}</span>
+    <span className="md:hidden">
+      {Number(n).toLocaleString(undefined, {
+        notation: "compact",
+      })}
+    </span>
+  </span>
+);
+
+const NumberCell = ({ children }: PropsWithChildren) => (
+  <div className="min-w-10">{children}</div>
+);

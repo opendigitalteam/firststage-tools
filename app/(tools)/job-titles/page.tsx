@@ -41,7 +41,7 @@ export default async function Page({
     <div className="flex flex-col  max-w-5xl gap-3 md:gap-8">
       <H1>Job Title Research Tool</H1>
 
-      <p className="text-lg text-balance max-w-3xl">
+      <p className="md:text-lg text-balance max-w-3xl">
         This is a free tool to help you research job title popularity and find
         alternatives you might not have thought of.
       </p>

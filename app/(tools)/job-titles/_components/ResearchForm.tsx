@@ -28,30 +28,26 @@ export default function ResearchForm({
       action={action}
       className="flex-1 flex flex-col gap-3 md:gap-5 xl:gap-7 max-w-2xl"
     >
-      <FormField errors={formErrors?.jobTitle} inline="center">
-        <FormLabel label="Job Title" htmlFor="jobTitle" widthClassName="w-32" />
+      <FormField errors={formErrors?.jobTitle}>
+        <FormLabel label="Job Title" htmlFor="jobTitle" />
 
-        <FormInputGroup width="grow">
+        <FormInputGroup>
           <FormErrors errors={formErrors?.jobTitle} />
 
           <input
             type="text"
             id="jobTitle"
             name="jobTitle"
-            className="w-full rounded-full border-2 border-odpink-black/50 px-6 py-3 text-lg group-[.error]:border-red-500"
+            className="w-full rounded-full border-2 border-odpink-black/50 px-6 py-3 md:text-lg group-[.error]:border-red-500"
             defaultValue={jobTitle}
           />
         </FormInputGroup>
       </FormField>
 
-      {showMoreOptions ? (
+      {showMoreOptions && (
         <>
-          <FormField errors={formErrors?.location} inline="center">
-            <FormLabel
-              label="Location"
-              htmlFor="location"
-              widthClassName="w-32"
-            />
+          <FormField errors={formErrors?.location}>
+            <FormLabel label="Location" htmlFor="location" />
 
             <FormInputGroup>
               <FormErrors errors={formErrors?.location} />
@@ -60,7 +56,7 @@ export default function ResearchForm({
                 <select
                   id="location"
                   name="location"
-                  className="w-full max-w-md rounded-full border-2 border-odpink-black/50 px-6 py-3 text-lg group-[.error]:border-red-500"
+                  className="w-full max-w-md rounded-full border-2 border-odpink-black/50 px-6 py-3 md:text-lg group-[.error]:border-red-500"
                   defaultValue={location}
                 >
                   <optgroup>
@@ -90,22 +86,24 @@ export default function ResearchForm({
             </FormInputGroup>
           </FormField>
         </>
-      ) : (
-        <div>
-          <input type="hidden" name="location" value="global" />
-          <button
-            className="font-medium underline hover:text-odpink-mid"
-            onClick={() => setShowMoreOptions(true)}
-          >
-            Filter by location
-          </button>
-        </div>
       )}
 
-      <div>
+      <div className="flex max-md:flex-col-reverse gap-5 items-center">
         <UtilitySubmit size="lg" color="pink">
           <Search className="-ml-1" /> Search
         </UtilitySubmit>
+
+        {!showMoreOptions && (
+          <div>
+            <input type="hidden" name="location" value="global" />
+            <button
+              className="font-medium underline hover:text-odpink-mid"
+              onClick={() => setShowMoreOptions(true)}
+            >
+              Filter by location
+            </button>
+          </div>
+        )}
       </div>
     </form>
   );
