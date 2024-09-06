@@ -14,15 +14,15 @@ export default function Home() {
         <li>
           <Link href="/ai-adoption-uk" className="group">
             <Glass>
-              <div className="p-3 md:p-5 xl:p-8 2xl:p-12 flex gap-3 md:gap-5 xl:gap-8">
-                <div className="w-80">
+              <div className="p-3 md:p-5 xl:p-8 2xl:p-12 flex max-md:flex-col gap-3 md:gap-5 xl:gap-8">
+                <div className="md:w-80 md:flex-none">
                   <Image src={aiAdoptionImage} alt="" className="rounded-lg" />
                 </div>
                 <div className="flex flex-col gap-2 md:gap-3 xl:gap-5">
-                  <div className="font-medium underline group-hover:text-odpink-mid text-2xl">
+                  <div className="font-medium underline group-hover:text-odpink-mid text-lg md:text-2xl">
                     AI adoption in UK companies: Benchmarking Tool
                   </div>
-                  <div className="text-lg">
+                  <div className="md:text-lg max-w-md">
                     Benchmark your business to see how your business compares to
                     similar organisations across the UK.
                   </div>
@@ -35,8 +35,8 @@ export default function Home() {
         <li>
           <Link href="/job-titles" className="group">
             <Glass>
-              <div className="p-3 md:p-5 xl:p-8 2xl:p-12 flex gap-3 md:gap-5 xl:gap-8">
-                <div className="w-80">
+              <div className="p-3 md:p-5 xl:p-8 2xl:p-12 flex max-md:flex-col gap-3 md:gap-5 xl:gap-8">
+                <div className="md:w-80 md:flex-none">
                   <Image
                     src={alternateJobTitlesImage}
                     alt=""
@@ -44,10 +44,10 @@ export default function Home() {
                   />
                 </div>
                 <div className="flex flex-col gap-2 md:gap-3 xl:gap-5">
-                  <div className="font-medium underline group-hover:text-odpink-mid text-2xl">
+                  <div className="font-medium underline group-hover:text-odpink-mid text-lg md:text-2xl">
                     Job Title Research Tool
                   </div>
-                  <div className="text-lg">
+                  <div className="md:text-lg max-w-md">
                     Research the best job title to attract the right volume and
                     quality of candidates, or know who to sell to.
                   </div>
