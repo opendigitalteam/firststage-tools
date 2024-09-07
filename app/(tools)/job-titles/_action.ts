@@ -77,7 +77,7 @@ export async function researchFromCache(
   const response = await FetchCacheData({
     gateway: cacheGateway,
     keyPrefix: `tools/alternate-job-titles/ranked-alternatives-${CACHE_VERSION}`,
-    key: `${query.jobTitle}-${query.location}`,
+    key: `${query.jobTitle}-${query.location}`.toLowerCase(),
   });
 
   if (response) {
@@ -93,7 +93,7 @@ async function suggestRankedAlternatives(
     {
       gateway: cacheGateway,
       keyPrefix: `tools/alternate-job-titles/ranked-alternatives-${CACHE_VERSION}`,
-      key: `${jobTitle}-${location}`,
+      key: `${jobTitle}-${location}`.toLowerCase(),
     },
     async () => {
       const alternatives = await searchResults(
@@ -122,7 +122,7 @@ async function suggestAlternatives(jobTitle: string) {
     {
       gateway: cacheGateway,
       keyPrefix: `tools/alternate-job-titles/suggest-alternatives-${CACHE_VERSION}`,
-      key: jobTitle,
+      key: jobTitle.toLowerCase(),
     },
     async () => {
       const response = await CreateChatCompletion({
@@ -202,7 +202,7 @@ async function searchForJob(jobTitle: string, location: CountryCode) {
     {
       gateway: cacheGateway,
       keyPrefix: `tools/alternate-job-titles/job-google-search-${CACHE_VERSION}`,
-      key: query,
+      key: query.toLowerCase(),
     },
     async () =>
       await Search({
@@ -248,7 +248,7 @@ async function searchForJobOnIndeed(jobTitle: string, location: CountryCode) {
     {
       gateway: cacheGateway,
       keyPrefix: `tools/alternate-job-titles/job-on-indeed-google-search-${CACHE_VERSION}`,
-      key: query,
+      key: query.toLowerCase(),
     },
     async () =>
       await Search({
@@ -294,7 +294,7 @@ async function searchForJobOnLinkedIn(jobTitle: string, location: CountryCode) {
     {
       gateway: cacheGateway,
       keyPrefix: `tools/alternate-job-titles/job-on-li-google-search-${CACHE_VERSION}`,
-      key: query,
+      key: query.toLowerCase(),
     },
     async () =>
       await Search({

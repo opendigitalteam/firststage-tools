@@ -7,10 +7,7 @@ export const CountryCode = z.custom<TCountryCode | "global">(
 );
 export type CountryCode = z.infer<typeof CountryCode>;
 
-export const JobTitle = z
-  .string()
-  .min(1, "Enter job title")
-  .transform((v) => v.toLowerCase());
+export const JobTitle = z.string().min(1, "Enter job title");
 
 export const ResearchQuery = z.object({
   jobTitle: JobTitle,
