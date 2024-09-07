@@ -28,7 +28,7 @@ import {
   linkedInDomainsByCountryCode,
 } from "./_jobSites";
 
-const CACHE_VERSION = "v10";
+const CACHE_VERSION = "v11";
 
 const completionGateway = new OpenAIChatCompletionGateway({
   client: new OpenAI({ apiKey: OPENAI_API_KEY }),
