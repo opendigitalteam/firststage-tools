@@ -11,42 +11,42 @@ export default function ExamplesToTry() {
 
         <Link
           href="?jobTitle=Software+Engineer"
-          className="font-medium underline hover:text-odpink-mid"
+          className="max-sm:text-sm font-medium underline hover:text-odpink-mid"
         >
           Software Engineer
         </Link>
 
         <Link
           href="?jobTitle=Data+Scientist"
-          className="font-medium underline hover:text-odpink-mid"
+          className="max-sm:text-sm font-medium underline hover:text-odpink-mid"
         >
           Data Scientist
         </Link>
 
         <Link
           href="?jobTitle=Business+Development+Representative"
-          className="font-medium underline hover:text-odpink-mid"
+          className="max-sm:text-sm font-medium underline hover:text-odpink-mid"
         >
           Business Development Representative
         </Link>
 
         <Link
           href="?jobTitle=Marketing+Manager"
-          className="font-medium underline hover:text-odpink-mid"
+          className="max-sm:text-sm font-medium underline hover:text-odpink-mid"
         >
           Marketing Manager
         </Link>
 
         <Link
           href="?jobTitle=Customer+Service+Representative"
-          className="font-medium underline hover:text-odpink-mid"
+          className="max-sm:text-sm font-medium underline hover:text-odpink-mid"
         >
           Customer Service Representative
         </Link>
 
         <Link
           href="?jobTitle=Talent+Lead"
-          className="font-medium underline hover:text-odpink-mid"
+          className="max-sm:text-sm font-medium underline hover:text-odpink-mid"
         >
           Talent Lead
         </Link>

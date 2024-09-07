@@ -12,16 +12,19 @@ import {
 } from "../../_components/Form";
 import { UtilitySubmit } from "../../_components/UtilityButton";
 import { research } from "../_action";
+import { CountryCode } from "../_domain";
 
 export default function ResearchForm({
   jobTitle,
   location,
 }: {
   jobTitle?: string;
-  location?: string;
+  location?: CountryCode;
 }) {
   const [formErrors, action] = useFormState(research, undefined);
-  const [showMoreOptions, setShowMoreOptions] = useState(location !== "global");
+  const [showMoreOptions, setShowMoreOptions] = useState(
+    location !== "global" && location !== undefined
+  );
 
   return (
     <form
@@ -29,7 +32,11 @@ export default function ResearchForm({
       className="flex-1 flex flex-col gap-3 md:gap-5 xl:gap-7 max-w-2xl"
     >
       <FormField errors={formErrors?.jobTitle}>
-        <FormLabel label="Job Title" htmlFor="jobTitle" />
+        <FormLabel
+          label="Job Title"
+          htmlFor="jobTitle"
+          hint="Enter a job title you would like to research"
+        />
 
         <FormInputGroup>
           <FormErrors errors={formErrors?.jobTitle} />
@@ -38,10 +45,19 @@ export default function ResearchForm({
             type="text"
             id="jobTitle"
             name="jobTitle"
-            className="w-full rounded-full border-2 border-odpink-black/50 px-6 py-3 md:text-lg group-[.error]:border-red-500"
+            className="w-full rounded border-2 border-odpink-black/50 px-3 py-2 group-[.error]:border-red-500"
             defaultValue={jobTitle}
           />
         </FormInputGroup>
+
+        {!showMoreOptions && (
+          <button
+            className="md:hidden text-sm self-start font-medium underline hover:text-odpink-mid"
+            onClick={() => setShowMoreOptions(true)}
+          >
+            Filter by location
+          </button>
+        )}
       </FormField>
 
       {showMoreOptions && (
@@ -56,7 +72,7 @@ export default function ResearchForm({
                 <select
                   id="location"
                   name="location"
-                  className="w-full max-w-md rounded-full border-2 border-odpink-black/50 px-6 py-3 md:text-lg group-[.error]:border-red-500"
+                  className="w-full md:max-w-md rounded border-2 border-odpink-black/50 px-3 py-2 group-[.error]:border-red-500"
                   defaultValue={location}
                 >
                   <optgroup>
@@ -76,33 +92,33 @@ export default function ResearchForm({
                   </optgroup>
                 </select>
 
-                <button
+                {/* <button
                   className="font-medium underline hover:text-odpink-mid whitespace-nowrap"
                   onClick={() => setShowMoreOptions(false)}
                 >
                   show global results
-                </button>
+                </button> */}
               </div>
             </FormInputGroup>
           </FormField>
         </>
       )}
 
-      <div className="flex max-md:flex-col-reverse gap-5 items-center">
+      <div className="flex gap-5 items-center mt-1">
         <UtilitySubmit size="lg" color="pink">
           <Search className="-ml-1" /> Search
         </UtilitySubmit>
 
         {!showMoreOptions && (
-          <div>
+          <>
             <input type="hidden" name="location" value="global" />
             <button
-              className="font-medium underline hover:text-odpink-mid"
+              className="max-md:hidden font-medium underline hover:text-odpink-mid"
               onClick={() => setShowMoreOptions(true)}
             >
               Filter by location
             </button>
-          </div>
+          </>
         )}
       </div>
     </form>
