@@ -17,7 +17,12 @@ import { DateTime } from "luxon";
 import { redirect } from "next/navigation";
 import OpenAI from "openai";
 import { z, ZodFormattedError } from "zod";
-import { AlternateJobTitle, CountryCode, ResearchQuery } from "./_domain";
+import {
+  AlternateJobTitle,
+  CountryCode,
+  JobTitle,
+  ResearchQuery,
+} from "./_domain";
 import {
   indeedDomainsByCountryCode,
   linkedInDomainsByCountryCode,
@@ -146,7 +151,7 @@ Respond with JSON in this format:
           z
             .object({
               alternatives: z
-                .object({ jobTitle: z.string(), relevance: z.number() })
+                .object({ jobTitle: JobTitle, relevance: z.number() })
                 .array(),
             })
             .parse(input),
@@ -177,13 +182,13 @@ async function searchResults(
           searchForJobOnIndeed(jobTitle, location),
           searchForJobOnLinkedIn(jobTitle, location),
         ]);
-      return {
+      return AlternateJobTitle.parse({
         jobTitle,
         relevance,
         popularityScore,
         indeedScore,
         linkedInScore,
-      };
+      });
     })
   );
 }

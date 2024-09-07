@@ -23,7 +23,7 @@ export default async function ResearchFormResults({
         .sort((a, b) => (a.relevance > b.relevance ? -1 : 1))
         .map((alternative, i) => (
           <tr key={i}>
-            <td className="py-1 text-sm leading-tight sm:leading-normal sm:text-base">
+            <td className="py-1 text-sm leading-tight capitalize sm:leading-normal sm:text-base">
               <Link
                 href={`?${new URLSearchParams({
                   jobTitle: alternative.jobTitle,
@@ -43,7 +43,7 @@ export default async function ResearchFormResults({
             </td>
             <td className="p-1 font-mono text-right text-xs sm:text-sm md:text-base">
               <NumberCell>
-                <ResponsiveNumber n={alternative.popularityScore} />
+                <ResponsiveNumber n={alternative.indeedScore} />
               </NumberCell>
             </td>
             <td className="p-1 font-mono text-right text-xs sm:text-sm md:text-base">
@@ -66,7 +66,7 @@ function ResultsContainer({
     <Glass>
       <div className="flex flex-col gap-3 md:gap-5 xl:gap-7 p-3 md:p-5 xl:p-7">
         <h2 className="text-lg font-bold !leading-tight sm:text-xl lg:text-2xl 2xl:text-3xl">
-          Results for {jobTitle},{" "}
+          Results for <span className="capitalize">{jobTitle}</span>,{" "}
           {location !== "global" ? countries[location]?.name : "Global"}
         </h2>
 

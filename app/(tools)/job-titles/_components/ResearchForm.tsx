@@ -52,6 +52,7 @@ export default function ResearchForm({
 
         {!showMoreOptions && (
           <button
+            type="button"
             className="md:hidden text-sm self-start font-medium underline hover:text-odpink-mid"
             onClick={() => setShowMoreOptions(true)}
           >
