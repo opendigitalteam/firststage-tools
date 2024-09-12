@@ -65,25 +65,37 @@ function ResultsContainer({
   return (
     <Glass>
       <div className="flex flex-col gap-3 md:gap-5 xl:gap-7 p-3 md:p-5 xl:p-7">
-        <h2 className="text-lg font-bold !leading-tight sm:text-xl lg:text-2xl 2xl:text-3xl">
-          Results for <span className="capitalize">{jobTitle}</span>,{" "}
-          {location !== "global" ? countries[location]?.name : "Global"}
+        <h2 className=" font-medium">
+          <div className="text-xs sm:text-sm lg:text-base 2xl:text-lg">
+            Results
+            {location !== "global" && (
+              <span className="text-xs sm:text-sm lg:text-base font-medium 2xl:text-lg text-odpink-black">
+                {" "}
+                in {countries[location]?.name}
+              </span>
+            )}{" "}
+            for{" "}
+          </div>
+
+          <div className="lg:-mt-1 font-bold text-lg text-odpink-mid !leading-tight sm:text-xl lg:text-2xl 2xl:text-3xl">
+            <span className="capitalize">{jobTitle}</span>
+          </div>
         </h2>
 
         <table className="w-full">
           <thead className="border-b md:text-lg">
             <tr>
-              <th className="text-left pb-2">Job Title</th>
-              <th className="text-right pb-2">
+              <th className="font-semibold text-left pb-2">Job Title</th>
+              <th className="font-semibold text-right pb-2">
                 Rel<span className="max-md:sr-only">evance</span>
               </th>
-              <th className="text-right pb-2">
+              <th className="font-semibold text-right pb-2">
                 Pop<span className="max-md:sr-only">ularity</span>
               </th>
-              <th className="text-right pb-2">
+              <th className="font-semibold text-right pb-2">
                 In<span className="max-md:sr-only">deed</span>
               </th>
-              <th className="text-right pb-2">
+              <th className="font-semibold text-right pb-2">
                 Li<span className="max-md:sr-only">nkedIn</span>
               </th>
             </tr>
