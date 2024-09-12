@@ -51,6 +51,7 @@ export default async function Page({
           key={queryValidation.data?.jobTitle}
           jobTitle={queryValidation.data?.jobTitle}
           location={queryValidation.data?.location}
+          autoSubmit={alternateJobTitles === undefined}
         />
 
         {queryValidation.data?.jobTitle ? (

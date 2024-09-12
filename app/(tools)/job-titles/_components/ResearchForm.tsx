@@ -2,7 +2,7 @@
 
 import { countries } from "countries-list";
 import { Search } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFormState } from "react-dom";
 import {
   FormErrors,
@@ -17,19 +17,29 @@ import { CountryCode } from "../_domain";
 export default function ResearchForm({
   jobTitle,
   location,
+  autoSubmit,
 }: {
   jobTitle?: string;
   location?: CountryCode;
+  autoSubmit?: boolean;
 }) {
+  const formRef = useRef<HTMLFormElement>(null);
   const [formErrors, action] = useFormState(research, undefined);
   const [showMoreOptions, setShowMoreOptions] = useState(
     location !== "global" && location !== undefined
   );
 
+  useEffect(() => {
+    if (autoSubmit && jobTitle) {
+      formRef.current?.requestSubmit();
+    }
+  }, [autoSubmit, jobTitle]);
+
   return (
     <form
       action={action}
       className="flex-1 flex flex-col gap-3 md:gap-5 xl:gap-7 max-w-2xl"
+      ref={formRef}
     >
       <FormField errors={formErrors?.jobTitle}>
         <FormLabel
